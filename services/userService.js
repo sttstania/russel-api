@@ -11,7 +11,7 @@ exports.createUser = async (name, email, password) => {
     };
 
 // Get all users
-expports.getAllUsers = () => {
+exports.getAllUsers = () => {
     return User.find();
 };
 
