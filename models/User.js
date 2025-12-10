@@ -1,7 +1,9 @@
-const express = require('express');
-const  moongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-const userSchema = new moongoose.Schema({
+const validator = require('validator');
+
+
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Name is required'],
@@ -37,4 +39,4 @@ userSchema.index({ email: 1 }, { unique: true });
 
 
 
-module.exports = moongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);
