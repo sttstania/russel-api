@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "seed-catways": "node seed/catwaysSeed.js",
     "docs": "jsdoc -c jsdoc.json",
     "test": "mocha tests/setup.js tests/*.test.js --timeout 10000"
   },
