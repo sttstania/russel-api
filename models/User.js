@@ -1,8 +1,21 @@
+/**
+ * @file User.js
+ * @description Mongoose schema and model for users in Port Russell API
+ */
+
 const mongoose = require('mongoose');
 
 const validator = require('validator');
 
-
+/**
+ * @typedef User
+ * @property {string} name - Name of the user (letters and spaces only, min 2 characters)
+ * @property {string} email - User's email (must be unique and valid)
+ * @property {string} passwordHash - Hashed password (min 8 characters)
+ * @property {string} [role='user'] - Role of the user ("user" or "admin")
+ * @property {Date} createdAt - Timestamp of creation
+ * @property {Date} updatedAt - Timestamp of last update
+ */
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -37,6 +50,8 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ email: 1 }, { unique: true });
 
 
-
+/**
+ * @type {mongoose.Model<User>}
+*/
 
 module.exports = mongoose.model('User', userSchema);

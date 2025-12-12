@@ -1,49 +1,61 @@
+/**
+ * @file app.js
+ * @description Main Express application for Port Russell API
+ */
+
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 
+
 const app = express();
 
-// DB connection if not in test mode
-if (process.env.RUN_TESTS === 'true') {
-    console.log('🔧 Using test database configuration');
+/**
+ * Connect to MongoDB
+ * Only connect if not in test environment to avoid collisions with in-memory DB
+ */
+if (process.env.NODE_ENV !== 'test') {
     connectDB();
 }
 
-
-// Middlewares
+/**
+ * Express middlewares
+ * - JSON parsing
+ */
 app.use(express.json());
 
-// Routes
+/**
+ * Routes
+ * @route /api/users
+ * @route /api/catways
+ */
 app.use('/api/users', userRoutes);
+app.use('/api/catways', require('./routes/catwayRoutes'));
 
+/**
+ * @route GET /
+ * @description Basic welcome route
+ * @returns {string} Welcome message
+ */
 app.get('/', (req, res) => {
     res.send('Welcome to the Port Russell API');
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-
-// Auto-run tests when RUN_TESTS=true
-if (process.env.RUN_TESTS === 'true') {
-    console.log('🔥 Running tests automatically...');
-
-    const { exec } = require('child_process');
-
-    exec('npm test', (error, stdout, stderr) => {
-        console.log(stdout);
-
-        if (stderr) console.error(stderr);
-        if (error) console.error(error);
-
-        mongoose.connection.close(); // Close DB connection after tests
-    });
+/**
+ * Start server if not testing
+ * The server is not started during testing to prevent port conflicts
+ */
+if (process.env.NODE_ENV != 'test') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    
+    })
 }
 
-
+/**
+ * @exports app
+ */
 module.exports = app;
