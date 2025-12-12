@@ -1,7 +1,20 @@
+/**
+ * @file Catway.js
+ * @description Mongoose schema and model for catways in Port Russell API
+ */
+
 const mongoose = require('mongoose');
 const validator = require('validator');
 const { validate } = require('./User');
 
+/**
+ * @typedef Catway
+ * @property {number} catwayNumber - Unique identifier for the catway (integer >= 1)
+ * @property {string} type - Type of catway ("short" or "long")
+ * @property {string} catwayState - Current state of the catway (e.g., "bon état", "maintenance")
+ * @property {Date} createdAt - Timestamp of creation
+ * @property {Date} updatedAt - Timestamp of last update
+ */
 const catwaySchema = new mongoose.Schema({
     catwayNumber: {
         type: Number,
@@ -24,14 +37,13 @@ const catwaySchema = new mongoose.Schema({
     catwayState: {
         type: String,
         required: [true, 'Catway state is required'],  
-        enum: {
-            values: ['available', 'reserved', 'maintenance'],
-            message: '{VALUE} is not a valid catway state',
-        },
     },
 }, 
     { timestamps: true }
 );
 
+/**
+ * @type {mongoose.Model<Catway>}
+ */
 
 module.exports = mongoose.model('Catway', catwaySchema);

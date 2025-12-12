@@ -1,12 +1,27 @@
+/**
+ * @file user.test.js
+ * @description Integration tests for User API endpoints
+ * @requires supertest
+ * @requires chai
+ * @requires ../app
+ * @requires ../models/User
+*/
+
 const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../app'); 
 const User = require('../models/User');
 
-// Ensure the test database is used
+/**
+ * Integration tests for User API
+*/
 describe('User API - Tests', function() {
 
-    // Test for creating a new user
+    /**
+     * Test creating a new user
+     * @route POST /api/users
+     * @expectedStatus 201
+    */
     it ('POST /api/users - should create a new user', async function() {
         const res = await request(app)
             .post('/api/users')
@@ -22,7 +37,11 @@ describe('User API - Tests', function() {
         expect(res.body.email).to.equal('john@test.com');
     });
 
-    // Test for fetching all users
+    /**
+     * Test retrieving all users
+     * @route GET /api/users
+     * @expectedStatus 200
+    */
     it ('GET /api/users - should return all users', async function() {
         // First, create a user to ensure the DB is not empty
         await User.create({ 
@@ -39,7 +58,11 @@ describe('User API - Tests', function() {
         expect(res.body[0].name).to.equal('Jane Doe');
     });
 
-    // Test for fetching a user by ID
+    /**
+     * Test retrieving a single user by ID
+     * @route GET /api/users/:id
+     * @expectedStatus 200
+    */
     it ('GET /api/users/:id - should return user by ID', async function() {
         const newUser = await User.create({
             name: 'Bob',
@@ -54,7 +77,11 @@ describe('User API - Tests', function() {
         expect(res.body.name).to.equal('Bob');
     });
 
-    // Test for deleting a user by ID
+    /**
+     * Test deleting a user by ID
+     * @route DELETE /api/users/:id
+     * @expectedStatus 204
+    */
     it ('DELETE /api/users/:id - should delete user by ID', async function() {
         const userToDelete = await User.create({
             name: 'Tom',

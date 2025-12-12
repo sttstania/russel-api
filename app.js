@@ -1,3 +1,8 @@
+/**
+ * @file app.js
+ * @description Main Express application for Port Russell API
+ */
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -7,39 +12,50 @@ const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// Connect to MongoDB
+/**
+ * Connect to MongoDB
+ * Only connect if not in test environment to avoid collisions with in-memory DB
+ */
+if (process.env.NODE_ENV !== 'test') {
     connectDB();
+}
 
-// Middlewares
+/**
+ * Express middlewares
+ * - JSON parsing
+ */
 app.use(express.json());
 
-// Routes
+/**
+ * Routes
+ * @route /api/users
+ * @route /api/catways
+ */
 app.use('/api/users', userRoutes);
 app.use('/api/catways', require('./routes/catwayRoutes'));
 
+/**
+ * @route GET /
+ * @description Basic welcome route
+ * @returns {string} Welcome message
+ */
 app.get('/', (req, res) => {
     res.send('Welcome to the Port Russell API');
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+/**
+ * Start server if not testing
+ * The server is not started during testing to prevent port conflicts
+ */
+if (process.env.NODE_ENV != 'test') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    
+    })
+}
 
-    // Auto-run tests when RUN_TESTS=true
-     if (process.env.RUN_TESTS === 'true') {
-        console.log('🔥 Running tests automatically...');
-        exec('npm test', (error, stdout, stderr) => {
-            console.log(stdout);
-            if (stderr) console.error(stderr);
-            if (error) console.error(error);
-
-            // Close DB connection after tests
-            const mongoose = require('mongoose');
-            mongoose.connection.close();
-        });
-    }
-});
-
-
+/**
+ * @exports app
+ */
 module.exports = app;

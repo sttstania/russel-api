@@ -1,3 +1,9 @@
+/**
+ * @file catwayseed.js
+ * @description Synchronizes catways from JSON file to MongoDB database
+ * @module catwayseed
+ */
+
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
@@ -5,18 +11,29 @@ const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const Catway = require('../models/Catway');
 
-// Function to sync catways from JSON file to database
+/**
+ * Synchronize catways from JSON file to database.
+ * - If a catway does not exist, it is created.
+ * - If it exists, type and catwayState are updated if changed.
+ * @async
+ * @function syncCatways
+ */
 const syncCatways = async () => {
     try {
         await connectDB();
 
-        // Read catways from JSON file
+         /** @type {string} Path to the JSON file containing catways */
         const filePath = path.join(__dirname, '../data/catways.json');
+
+        /** @type {string} Raw JSON data from file */
         const data = fs.readFileSync(filePath, 'utf-8');
+
+        /** @type {Array<Object>} Parsed catways from JSON */
         const catwaysFromFile = JSON.parse(data);
 
         // Iterate through each catway from the file
         for (const catway of catwaysFromFile) {
+            /** @type {Object|null} Existing catway in DB */
             const existingCatway = await Catway.findOne({ catwayNumber: catway.catwayNumber });
 
             // If catway doesn't exist, create it; if it exists, update it
@@ -50,4 +67,5 @@ const syncCatways = async () => {
     }
 };
 
+// Run the synchronization
 syncCatways();
