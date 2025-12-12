@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const Reservation = require('../models/Reservation');
 const Catway = require('../models/Catway');
-const User = require('../models/User');  // ✅ Import User model
+const User = require('../models/User');  
 
 /**
  * Seed reservations into MongoDB

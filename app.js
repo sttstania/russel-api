@@ -34,6 +34,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/catways', require('./routes/catwayRoutes'));
 
+
 /**
  * @route GET /
  * @description Basic welcome route
