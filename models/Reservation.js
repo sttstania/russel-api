@@ -1,6 +1,6 @@
 /**
  * @file Reservation.js
- * @description Mongoose model for reservations
+ * @description Routes for reservations related to catways
  */
 
 const mongoose = require('mongoose');

@@ -1,23 +1,22 @@
 /**
  * @file validateObjectId.js
- * @description Validate MongoDB ObjectId in request params
+ * @description Validate any MongoDB ObjectId in request params
  */
 
-// middlewares/validateObjectId.js
 const mongoose = require('mongoose');
 
-const validateObjectId = (req, res, next) => {
-    const keys = Object.keys(req.params);
+const validateObjectId = (paramName) => {
+  return (req, res, next) => {
+    const value = req.params[paramName];
 
-    for (const key of keys) {
-        if (!mongoose.Types.ObjectId.isValid(req.params[key])) {
-            return res.status(400).json({
-                message: `Invalid MongoDB ID for parameter: ${key}`
-            });
-        }
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+      return res.status(400).json({
+        message: `Invalid MongoDB ObjectId for parameter "${paramName}"`
+      });
     }
 
     next();
+  };
 };
 
 module.exports = validateObjectId;
