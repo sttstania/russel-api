@@ -3,7 +3,7 @@
  * @description Controller layer for User API endpoints
  */
 
-const userService = require('../services/userService');
+const User = require('../models/User');
 
 
 /**

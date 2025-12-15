@@ -1,70 +1,97 @@
-/**
- * @description Get all reservations for a specific catway
-*/
-
-const { checkout } = require("../app");
-const Catway = require("../models/Catway");
-const Reservation = require("../models/Reservation");
+const Catway = require('../models/Catway');
+const Reservation = require('../models/Reservation');
+const User = require('../models/User');
 
 /**
- * @description Get all reservations for a specific catway
-*/
+ * Get all reservations for a specific catway
+ */
 exports.getReservationsByCatway = async (req, res) => {
-    try  {
-        const catway = await Catway.findById(req.params.id);
-        if (!catway) return res.status(404).jon({message: 'Catway not find'});
+    try {
+        const { catwayId } = req.params;
 
-        const reservations = await Reservation.find({ Catway: catway.id })
+        const reservations = await Reservation.find({ catway: catwayId })
             .populate('client', 'name email');
+
         res.status(200).json(reservations);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
 /**
- * @description Get a specific reservation by its id for a catway
-*/
+ * Get one reservation for a specific catway
+ */
 exports.getReservationByIdForCatway = async (req, res) => {
     try {
+        const { catwayId, reservationId } = req.params;
+
         const reservation = await Reservation.findOne({
-            _id: req.params.idReservation,
-            catway: req.params.id
+            _id: reservationId,
+            catway: catwayId
         }).populate('client', 'name email');
 
-        if (!reservation) return res.status(404).json({ message: 'Reservation not found'});
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+
         res.status(200).json(reservation);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
 /**
- * @description Create a reservation for a specific catway
-*/
+ * Create reservation for a catway
+ */
 exports.createReservationForCatway = async (req, res) => {
     try {
-        const catway = await Catway.findById(req.params.id);
-        if(!catway) return res.status(404).json({ message: 'Catway not found' });
+        const { catwayId } = req.params;
+        const { clientName, boatName, checkIn, checkOut } = req.body;
 
-        const { clientName, boatName, checkIn, checkOut, status } = req.body;
+        const catway = await Catway.findById(catwayId);
+        if (!catway) {
+            return res.status(404).json({ message: 'Catway not found' });
+        }
 
-        const client = await User.findOne({ name: ClientName });
-        if (!client) return res.status(404).json({ message: `User ${clientName} not found`});
+        const user = await User.findOne({ name: clientName });
+        if (!user) {
+            return res.status(404).json({ message: `User ${clientName} not found` });
+        }
 
         const reservation = await Reservation.create({
             catway: catway._id,
             catwayNumber: catway.catwayNumber,
-            client: client._id,
+            client: user._id,
             boatName,
-            checkIn: new Date(checkIn),
-            checkout: new Date(checkOut),
-            status: status || 'reserved'
+            checkIn,
+            checkOut,
+            status: 'reserved'
         });
 
         res.status(201).json(reservation);
     } catch (error) {
-        res.status(400).json({ message: 'Error creating reservation', error: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 
+/**
+ * Delete reservation for a catway
+ */
+exports.deleteReservationForCatway = async (req, res) => {
+    try {
+        const { catwayId, reservationId } = req.params;
+
+        const reservation = await Reservation.findOneAndDelete({
+            _id: reservationId,
+            catway: catwayId
+        });
+
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

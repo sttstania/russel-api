@@ -4,32 +4,56 @@
  */
 
 const express = require('express');
-const router = express.Router({ mergeParams: true }); // mergeParams to get catway id
-const reservationController = require('../controllers/reservationController');
+const router = express.Router();
+
+const controller = require('../controllers/reservationController');
+const validateObjectId = require('../middlewares/validateObjectId');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 /**
- * GET /catways/:id/reservations
- * Get all reservations for a specific catway
-*/
-router.get('/catways/:id/reservations', reservationController.getReservationByCatway);
+ * @route   GET /api/catways/:catwayId/reservations
+ * @desc    Get all reservations for a specific catway
+ * @access  Public
+ */
+router.get(
+    '/catways/:catwayId/reservations',
+    validateObjectId,
+    controller.getReservationsByCatway
+);
 
 /**
- * GET /catways/:id/reservations/:idReservation
- * Get one reservation belonging to a catway
-*/
-router.get('/catway/:id/reservations/:/idReservatio', reservationController.getReservationByIdForCatway);
+ * @route   GET /api/catways/:catwayId/reservations/:reservationId
+ * @desc    Get a specific reservation for a catway
+ * @access  Public
+ */
+router.get(
+    '/catways/:catwayId/reservations/:reservationId',
+    validateObjectId,
+    controller.getReservationByIdForCatway
+);
 
 /**
- * POST /catways/:id/reservations
- * Create a reservation for a specific catway
-*/
-router.post('/catway/:idreservations', reservationController.createReservationForCatway);
-
+ * @route   POST /api/catways/:catwayId/reservations
+ * @desc    Create a reservation for a catway
+ * @access  Private (JWT required)
+ */
+router.post(
+    '/catways/:catwayId/reservations',
+    authMiddleware,
+    validateObjectId,
+    controller.createReservationForCatway
+);
 
 /**
- * DELETE /catways/:id/reservations/:idReservation
- * Delete a reservation from a catway
-*/
-router.delete('catway/:id/reservations/:idReservation', reservationController.deleteReservation);
+ * @route   DELETE /api/catways/:catwayId/reservations/:reservationId
+ * @desc    Delete a reservation for a catway
+ * @access  Private (JWT required)
+ */
+router.delete(
+    '/catways/:catwayId/reservations/:reservationId',
+    authMiddleware,
+    validateObjectId,
+    controller.deleteReservationForCatway
+);
 
-module.exports = router
+module.exports = router;
