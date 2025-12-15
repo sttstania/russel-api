@@ -5,56 +5,44 @@
 
 const express = require('express');
 const router = express.Router();
-const catwayController = require('../controllers/catwayController');
 
+const catwayController = require('../controllers/catwayController');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 /**
  * @route GET /api/catways
- * @desc Get all catways
  * @access Public
  */
 router.get('/', catwayController.getAllCatways);
 
 /**
  * @route GET /api/catways/:id
- * @desc Get a catway by ID
  * @access Public
  */
 router.get('/:id', catwayController.getCatwayById);
 
 /**
  * @route POST /api/catways
- * @desc Create a new catway
- * @access Public
- * @body {number} catwayNumber - The number of the catway
- * @body {string} type - Type of catway ("short" or "long")
- * @body {string} catwayState - State description of the catway
+ * @access Protected
  */
-router.post('/', catwayController.createCatway);
+router.post('/', authMiddleware, catwayController.createCatway);
 
 /**
  * @route PUT /api/catways/:id
- * @desc Replace entire catway document
- * @access Public
- * @body {number} catwayNumber - The number of the catway
- * @body {string} type - Type of catway ("short" or "long")
- * @body {string} catwayState - State description of the catway
+ * @access Protected
  */
-router.put('/:id', catwayController.updateCatway);
+router.put('/:id', authMiddleware, catwayController.updateCatway);
 
 /**
  * @route PATCH /api/catways/:id
- * @desc Update part of a catway document
- * @access Public
- * @body {Object} Any fields to update (catwayNumber, type, catwayState)
+ * @access Protected
  */
-router.patch('/:id', catwayController.patchCatway);
+router.patch('/:id', authMiddleware, catwayController.patchCatway);
 
 /**
  * @route DELETE /api/catways/:id
- * @desc Delete a catway by ID
- * @access Public
+ * @access Protected
  */
-router.delete('/:id', catwayController.deleteCatway);
+router.delete('/:id', authMiddleware, catwayController.deleteCatway);
 
 module.exports = router;

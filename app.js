@@ -8,6 +8,8 @@ const express = require('express');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 
+const errorHandler = require('./middlewares/errorMiddleware');
+
 
 const app = express();
 
@@ -32,13 +34,13 @@ app.use(express.json());
  * @route /api/catways
  */
 app.use('/api/users', userRoutes);
-app.use('/api/reservations', require('./routes/reservationRoutes'));
 app.use('/api/catways', require('./routes/catwayRoutes'));
+app.use('/api', require('./routes/reservationRoutes'));
 
 
 /**
  * @route GET /
- * @description Basic welcome route
+ * @description Root route
  * @returns {string} Welcome message
  */
 app.get('/', (req, res) => {
@@ -52,6 +54,11 @@ const swaggerDocs = require('./config/swagger');
 swaggerDocs(app);
 
 /**
+ * Error handler (must be last)
+ */
+app.use(errorHandler);
+
+/**
  * Start server not during tests
  * The server is not started during testing to prevent port conflicts
 */
@@ -62,6 +69,7 @@ if (process.env.NODE_ENV != 'test') {
     
     })
 }
+
 
 /**
  * @exports app
