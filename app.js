@@ -34,8 +34,9 @@ app.use(express.json());
  * @route /api/catways
  */
 app.use('/api/users', userRoutes);
-app.use('/api/catways', require('./routes/catwayRoutes'));
-app.use('/api', require('./routes/reservationRoutes'));
+app.use('/api/catways', catwayRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/auth', authRoutes);
 
 
 /**
