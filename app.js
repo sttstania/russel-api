@@ -5,7 +5,6 @@
 
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 
@@ -29,9 +28,11 @@ app.use(express.json());
 /**
  * Routes
  * @route /api/users
+ * @route /api/reservations
  * @route /api/catways
  */
 app.use('/api/users', userRoutes);
+app.use('/api/reservations', require('./routes/reservationRoutes'));
 app.use('/api/catways', require('./routes/catwayRoutes'));
 
 
@@ -45,9 +46,15 @@ app.get('/', (req, res) => {
 });
 
 /**
- * Start server if not testing
+ * Swagger documentation
+*/
+const swaggerDocs = require('./config/swagger');
+swaggerDocs(app);
+
+/**
+ * Start server not during tests
  * The server is not started during testing to prevent port conflicts
- */
+*/
 if (process.env.NODE_ENV != 'test') {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
